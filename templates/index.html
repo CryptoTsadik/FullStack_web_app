@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.js"></script>
+        <title>title> CRYPTO CURRENCIES </title>
+    </head>
+    <body>
+    <div class="ui container">
+        <h1>Cryptocurrencies list</h1>
+        <form method = "get">
+            <select name="filter">
+                <option value="">All pairs</option>
+                <option value="Intraday price high (close)">Intraday price highs</option>
+                <option value="Intraday price low (close)">Intraday price lows</option>
+                <option value="Intraday high volume">Intraday volume highs</option>
+                <option value="Intraday low volume">Intraday volume lows</option>
+            </select>
+            <input type="Submit"/>
+        </form>
+        <table class="ui selectable inverted table">
+        <thead>
+        <tr>
+            <th>Pair name</th>
+            <th>Base asset</th>
+            <th>Quote asset</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for pair in pairs %}
+        <tr>
+            <td><a href="/pair/{{ pair['pair'] }}">{{ pair['pair'] }}</a></td>
+            <td>{{ pair['base_asset'] }}</td>
+            <td>{{ pair['quote_asset'] }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    </body>
+</html>
