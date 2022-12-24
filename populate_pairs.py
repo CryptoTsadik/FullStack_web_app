@@ -13,6 +13,8 @@ cursor.execute("""
             """)
 
 rows = cursor.fetchall()
+pairs_in_db = [row["pair"] for row in rows]
+
 
 # Create connection to Binance API
 client = Client()
@@ -22,16 +24,21 @@ info = client.get_exchange_info()
 # Get data only from symbols dict
 symbols = info["symbols"]
 exchange = "BINANCE"
+number_of_added_pairs = 0
 
 # Iterate over list of symbols, check if they are in DB, and add if not
 for symbol in symbols:
     try:
-        if symbol["status"] == "TRADING" and symbol["symbol"] not in rows:
+        if symbol["status"] == "TRADING" and symbol["symbol"] not in pairs_in_db:
             print(f"Added a new pair: {symbol['symbol']}")
+            number_of_added_pairs += 1
             cursor.execute("INSERT INTO currencies (pair, base_asset, quote_asset, exchange) VALUES (?, ?, ?, ?)",
                            (symbol["symbol"], symbol["baseAsset"], symbol["quoteAsset"], exchange))
     except Exception as e:
         print(symbol["symbol"])
         print(e)
+
+if number_of_added_pairs == 0:
+    print("No new pairs listed on exchange")
 
 connection.commit()
