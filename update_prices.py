@@ -7,9 +7,13 @@ connection = sqlite3.connect("app.db")
 connection.row_factory = sqlite3.Row
 cursor = connection.cursor()
 
-# Call the DB to get IDs and pairs
+# Call the DB to get pairs, IDs and last candle open time.
 cursor.execute("""
-                SELECT id, pair FROM currencies
+                SELECT pair, pair_id, max(open_time)
+                FROM currencies
+                LEFT JOIN pairs_price ON pairs_price.pair_id = currencies.id
+                GROUP BY pair
+                ORDER BY open_time DESC
 """)
 
 rows = cursor.fetchall()
@@ -19,19 +23,22 @@ client = Client(requests_params={"timeout": 60})
 pairs = [row["pair"] for row in rows]
 pair_dict = {}
 price_values = {}
+last_candle = max([row["max(open_time)"] for row in rows if row["max(open_time)"] is not None])
 
 # Create dicts with pair name as a key and pair id as value
 # to use pair_id in DB
 for row in rows:
     pair = row["pair"]
-    pair_dict[pair] = row["id"]
+    pair_dict[pair] = row["pair_id"]
 
 
-# Get prices data, save it to dictionary
+# Get prices data and write it do dictionary with pair_id as a key
 for i in range(0, len(pairs)):
     pair_name = pairs[i]
-    print(f"Processing pair: {pair_name}, Pair id: {pair_dict[pair_name]}, Counter of loaded pairs: {i + 1} of {len(pair_dict)}")
-    klines = client.get_historical_klines(pair_name, Client.KLINE_INTERVAL_1DAY ,  start_str="2017-08-01", end_str="2022-01-01")
+    print(f"Updating pair: {pair_name}, Pair id: {pair_dict[pair_name]}, "
+          f"Counter of loaded pairs: {i + 1} of {len(pair_dict)}, "
+          f"from date: {datetime.datetime.fromtimestamp(int(last_candle) / 1000)}")
+    klines = client.get_historical_klines(pair_name, Client.KLINE_INTERVAL_1DAY,  start_str=last_candle)
     pair_id = pair_dict[pair_name]
     price_values[pair_id] = klines
 
@@ -55,4 +62,5 @@ for pair_id, list_of_prices in price_values.items():
                        (pair_id, open_time, open, high, low, close, volume, quote_asset_volume, number_of_trades,
                         taker_buy_base_asset_volume, taker_buy_quote_asset_volume))
 
-# connection.commit()
+
+connection.commit()

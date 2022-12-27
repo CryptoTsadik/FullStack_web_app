@@ -21,6 +21,7 @@ client = Client()
 
 # Get data: timezone, ServerTime, rateLimits, exchangeFilters, symbols in dict type
 info = client.get_exchange_info()
+
 # Get data only from symbols dict
 symbols = info["symbols"]
 exchange = "BINANCE"
