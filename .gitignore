@@ -2,7 +2,6 @@ sandbox.py
 sandox_layout.html
 intraday_app.db
 app.db
-config.py
 drop_db.py
 __pycache__/
 
