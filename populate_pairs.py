@@ -25,7 +25,6 @@ info = client.get_exchange_info()
 
 # Get data only from symbols dict
 symbols = info["symbols"]
-
 exchange = "BINANCE"
 number_of_added_pairs = 0
 number_of_delisted_pairs = 0
