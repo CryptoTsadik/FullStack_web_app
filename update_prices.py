@@ -1,9 +1,10 @@
 import sqlite3
 from binance import Client
 import datetime
+from config import DB_FILE
 
 # Create connection to DB
-connection = sqlite3.connect("app.db")
+connection = sqlite3.connect(DB_FILE)
 connection.row_factory = sqlite3.Row
 cursor = connection.cursor()
 
@@ -21,16 +22,20 @@ rows = cursor.fetchall()
 # Create connection to Binance API
 client = Client(requests_params={"timeout": 60})
 pairs = [row["pair"] for row in rows]
+pair_ids = [row["pair_id"] for row in rows]
 pair_dict = {}
 price_values = {}
 last_candle = max([row["max(open_time)"] for row in rows if row["max(open_time)"] is not None])
+print(True)
 
 # Create dicts with pair name as a key and pair id as value
 # to use pair_id in DB
 for row in rows:
     pair = row["pair"]
-    pair_dict[pair] = row["pair_id"]
-
+    if row["pair_id"] <= max(pair_ids):
+        pair_dict[pair] = row["pair_id"]
+    else:
+        pair_dict[pair] = max(pair_ids) + 1
 
 # Get prices data and write it do dictionary with pair_id as a key
 for i in range(0, len(pairs)):
