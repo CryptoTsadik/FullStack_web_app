@@ -18,7 +18,7 @@ cursor.execute("""
         CREATE TABLE IF NOT EXISTS pairs_price (
             id INTEGER PRIMARY KEY,
             pair_id INTEGER,
-            open_time NOT NULL,
+            open_time INTEGER NOT NULL,
             open REAL NOT NULL,
             high REAL NOT NULL,
             low REAL NOT NULL,
@@ -28,7 +28,8 @@ cursor.execute("""
             number_of_trades REAL NOT NULL,
             taker_buy_base_asset_volume REAL NOT NULL,
             taker_buy_quote_asset_volume REAL NOT NULL,
-            FOREIGN KEY (pair_id) REFERENCES currencies (id)
+            FOREIGN KEY (pair_id) REFERENCES currencies (id) 
+            ON DELETE CASCADE
             )
             """)
 
