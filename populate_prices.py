@@ -1,9 +1,9 @@
 import sqlite3
 from binance import Client
-import datetime
+from config import DB_FILE
 
 # Create connection to DB
-connection = sqlite3.connect("app.db")
+connection = sqlite3.connect(DB_FILE)
 connection.row_factory = sqlite3.Row
 cursor = connection.cursor()
 
@@ -31,7 +31,7 @@ for row in rows:
 for i in range(0, len(pairs)):
     pair_name = pairs[i]
     print(f"Processing pair: {pair_name}, Pair id: {pair_dict[pair_name]}, Counter of loaded pairs: {i + 1} of {len(pair_dict)}")
-    klines = client.get_historical_klines(pair_name, Client.KLINE_INTERVAL_1DAY ,  start_str="2017-08-01", end_str="2022-01-01")
+    klines = client.get_historical_klines(pair_name, Client.KLINE_INTERVAL_1DAY, start_str="2017-08-01")
     pair_id = pair_dict[pair_name]
     price_values[pair_id] = klines
 
