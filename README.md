@@ -1,6 +1,8 @@
 # FullStack_web_app
 FullStack_web_app
 
+Under development
+
 Web app downloads data from Binance.com API, saves it to Sqlite DB, calculates technical indicators' values and conduct different filtering and backtesting.
 
 Developed features:
